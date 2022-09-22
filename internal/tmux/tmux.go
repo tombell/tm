@@ -24,6 +24,10 @@ type Tmux struct {
 	cmd cmd.Cmd
 }
 
+func New(cmd cmd.Cmd) Tmux {
+	return Tmux{cmd}
+}
+
 func (t Tmux) NewSession(name, root, windowName string) (string, error) {
 	cmd := exec.Command("tmux", "new-session", "-Pd", "-s", name, "-n", windowName, "-c", root)
 	return t.cmd.Exec(cmd)
