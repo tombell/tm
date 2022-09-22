@@ -15,12 +15,10 @@ type Config struct {
 		Name    string `yaml:"name"`
 		Root    string `yaml:"root"`
 		Windows []struct {
-			Name    string `yaml:"name"`
-			Root    string `yaml:"root"`
-			Command string `yaml:"command"`
-			Panes   []struct {
-				Root    string `yaml:"root"`
-				Command string `yaml:"command"`
+			Name  string `yaml:"name"`
+			Root  string `yaml:"root"`
+			Panes []struct {
+				Root string `yaml:"root"`
 			} `yaml:"panes"`
 		} `yaml:"windows"`
 	} `yaml:"sessions"`
