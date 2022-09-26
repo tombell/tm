@@ -16,3 +16,6 @@
 
 # Build output
 dist/
+
+# Project configuration YAML files
+*.yml
