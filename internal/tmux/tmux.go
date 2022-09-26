@@ -63,6 +63,12 @@ func (t Tmux) ListSessions() ([]TmuxSession, error) {
 	return sessions, nil
 }
 
+func (t Tmux) SessionExists(target string) bool {
+	cmd := exec.Command("tmux", "has-session", "-t", target)
+	out, err := t.cmd.Exec(cmd)
+	return err == nil && out == ""
+}
+
 func (t Tmux) NewWindow(target, name, root string) (string, error) {
 	cmd := exec.Command("tmux", "new-window", "-Pd", "-t", target, "-n", name, "-c", root, "-F", "#{window_id}")
 	return t.cmd.Exec(cmd)
