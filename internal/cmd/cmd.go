@@ -16,9 +16,13 @@ type DefaultCmd struct {
 	logger *log.Logger
 }
 
+func NewDefaultCmd(logger *log.Logger) DefaultCmd {
+	return DefaultCmd{logger}
+}
+
 func (c DefaultCmd) Exec(cmd *exec.Cmd) (string, error) {
 	if c.logger != nil {
-		c.logger.Println(strings.Join(cmd.Args, ""))
+		c.logger.Println(strings.Join(cmd.Args, " "))
 	}
 
 	output, err := cmd.CombinedOutput()
@@ -27,7 +31,7 @@ func (c DefaultCmd) Exec(cmd *exec.Cmd) (string, error) {
 			c.logger.Println(err, string(output))
 		}
 
-		return "", fmt.Errorf("executing command failed: %w", err)
+		return "", fmt.Errorf("exec command failed: %w", err)
 	}
 
 	return strings.TrimSuffix(string(output), "\n"), nil
@@ -35,7 +39,7 @@ func (c DefaultCmd) Exec(cmd *exec.Cmd) (string, error) {
 
 func (c DefaultCmd) ExecSilent(cmd *exec.Cmd) error {
 	if c.logger != nil {
-		c.logger.Println(strings.Join(cmd.Args, ""))
+		c.logger.Println(strings.Join(cmd.Args, " "))
 	}
 
 	if err := cmd.Run(); err != nil {
@@ -43,7 +47,7 @@ func (c DefaultCmd) ExecSilent(cmd *exec.Cmd) error {
 			c.logger.Println(err)
 		}
 
-		return fmt.Errorf("executing command failed: %w", err)
+		return fmt.Errorf("exec command failed: %w", err)
 	}
 
 	return nil
