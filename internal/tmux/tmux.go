@@ -7,6 +7,11 @@ import (
 	"github.com/tombell/tm/internal/cmd"
 )
 
+const (
+	VerticalSplit   = "vertical"
+	HorizontalSplit = "horizontal"
+)
+
 type TmuxSession struct {
 	ID   string
 	Name string
@@ -103,6 +108,27 @@ func (tmux Tmux) ListWindows(target string) ([]TmuxWindow, error) {
 	}
 
 	return windows, nil
+}
+
+func (tmux Tmux) SplitWindow(target, splitType, root string) (string, error) {
+	args := []string{"split-window", "-Pd"}
+
+	switch splitType {
+	case VerticalSplit:
+		args = append(args, "-v")
+	case HorizontalSplit:
+		args = append(args, "-h")
+	}
+
+	args = append(args, []string{"-t", target, "-c", root, "-F", "#{pane_id}"}...)
+	cmd := exec.Command("tmux", args...)
+
+	pane, err := tmux.cmd.Exec(cmd)
+	if err != nil {
+		return "", err
+	}
+
+	return pane, nil
 }
 
 func (tmux Tmux) SendKeys(target, command string) error {
