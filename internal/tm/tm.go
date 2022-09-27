@@ -59,6 +59,21 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 					return err
 				}
 			}
+
+			for _, p := range w.Panes {
+				paneRoot := resolvePath(windowRoot, p.Root)
+
+				pane, err := tm.tmux.SplitWindow(w.Name, "HorizontalSplit", paneRoot)
+				if err != nil {
+					return err
+				}
+
+				for _, c := range p.Commands {
+					if err := tm.tmux.SendKeys(w.Name+"."+pane, c); err != nil {
+						return err
+					}
+				}
+			}
 		}
 
 		if _, err := tm.tmux.KillWindow(defaultWindowName); err != nil {
