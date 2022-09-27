@@ -28,21 +28,21 @@ func New(cmd cmd.Cmd) Tmux {
 	return Tmux{cmd}
 }
 
-func (t Tmux) NewSession(name, root, windowName string) (string, error) {
+func (tmux Tmux) NewSession(name, root, windowName string) (string, error) {
 	cmd := exec.Command("tmux", "new-session", "-Pd", "-s", name, "-n", windowName, "-c", root)
-	return t.cmd.Exec(cmd)
+	return tmux.cmd.Exec(cmd)
 }
 
-func (t Tmux) KillSession(target string) (string, error) {
+func (tmux Tmux) KillSession(target string) (string, error) {
 	cmd := exec.Command("tmux", "kill-session", "-t", target)
-	return t.cmd.Exec(cmd)
+	return tmux.cmd.Exec(cmd)
 }
 
-func (t Tmux) ListSessions() ([]TmuxSession, error) {
+func (tmux Tmux) ListSessions() ([]TmuxSession, error) {
 	var sessions []TmuxSession
 
 	cmd := exec.Command("tmux", "list-sessions", "-F", "#{session_id};#{session_name};#{session_path}")
-	out, err := t.cmd.Exec(cmd)
+	out, err := tmux.cmd.Exec(cmd)
 	if err != nil {
 		return sessions, err
 	}
@@ -63,27 +63,27 @@ func (t Tmux) ListSessions() ([]TmuxSession, error) {
 	return sessions, nil
 }
 
-func (t Tmux) SessionExists(target string) bool {
+func (tmux Tmux) SessionExists(target string) bool {
 	cmd := exec.Command("tmux", "has-session", "-t", target)
-	out, err := t.cmd.Exec(cmd)
+	out, err := tmux.cmd.Exec(cmd)
 	return err == nil && out == ""
 }
 
-func (t Tmux) NewWindow(target, name, root string) (string, error) {
+func (tmux Tmux) NewWindow(target, name, root string) (string, error) {
 	cmd := exec.Command("tmux", "new-window", "-Pd", "-t", target, "-n", name, "-c", root, "-F", "#{window_id}")
-	return t.cmd.Exec(cmd)
+	return tmux.cmd.Exec(cmd)
 }
 
-func (t Tmux) KillWindow(target string) (string, error) {
+func (tmux Tmux) KillWindow(target string) (string, error) {
 	cmd := exec.Command("tmux", "kill-window", "-t", target)
-	return t.cmd.Exec(cmd)
+	return tmux.cmd.Exec(cmd)
 }
 
-func (t Tmux) ListWindows(target string) ([]TmuxWindow, error) {
+func (tmux Tmux) ListWindows(target string) ([]TmuxWindow, error) {
 	var windows []TmuxWindow
 
 	cmd := exec.Command("tmux", "list-windows", "-t", target, "-F", "#{window_id};#{window_name};#{pane_current_path};#{window_layout}")
-	out, err := t.cmd.Exec(cmd)
+	out, err := tmux.cmd.Exec(cmd)
 	if err != nil {
 		return windows, err
 	}
@@ -105,7 +105,7 @@ func (t Tmux) ListWindows(target string) ([]TmuxWindow, error) {
 	return windows, nil
 }
 
-func (t Tmux) SendKeys(target, command string) error {
+func (tmux Tmux) SendKeys(target, command string) error {
 	cmd := exec.Command("tmux", "send-keys", "-t", target, command, "Enter")
-	return t.cmd.ExecSilent(cmd)
+	return tmux.cmd.ExecSilent(cmd)
 }
