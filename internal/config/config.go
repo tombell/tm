@@ -8,15 +8,20 @@ import (
 )
 
 type Config struct {
-	Name string `yaml:"name"`
-	Root string `yaml:"root"`
+	Name        string   `yaml:"name"`
+	Root        string   `yaml:"root"`
+	BeforeStart []string `yaml:"before_start"`
 
 	Sessions []struct {
-		Name    string `yaml:"name"`
-		Root    string `yaml:"root"`
+		Name     string   `yaml:"name"`
+		Root     string   `yaml:"root"`
+		Commands []string `yaml:"commands"`
+
 		Windows []struct {
-			Name  string `yaml:"name"`
-			Root  string `yaml:"root"`
+			Name     string   `yaml:"name"`
+			Root     string   `yaml:"root"`
+			Commands []string `yaml:"commands"`
+
 			Panes []struct {
 				Root string `yaml:"root"`
 			} `yaml:"panes"`
