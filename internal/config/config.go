@@ -23,7 +23,9 @@ type Config struct {
 			Commands []string `yaml:"commands"`
 
 			Panes []struct {
-				Root string `yaml:"root"`
+				Type     string   `yaml:"type"`
+				Root     string   `yaml:"root"`
+				Commands []string `yaml:"commands"`
 			} `yaml:"panes"`
 		} `yaml:"windows"`
 	} `yaml:"sessions"`
