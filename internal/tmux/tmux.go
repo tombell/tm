@@ -104,3 +104,8 @@ func (t Tmux) ListWindows(target string) ([]TmuxWindow, error) {
 
 	return windows, nil
 }
+
+func (t Tmux) SendKeys(target, command string) error {
+	cmd := exec.Command("tmux", "send-keys", "-t", target, command, "Enter")
+	return t.cmd.ExecSilent(cmd)
+}
