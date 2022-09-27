@@ -1,7 +1,9 @@
 package tm
 
 import (
+	"fmt"
 	"os"
+	"os/exec"
 	"path/filepath"
 	"strings"
 
@@ -26,20 +28,36 @@ func New(tmux tmux.Tmux, cmd cmd.Cmd) Tm {
 func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 	root := expandPath(cfg.Root)
 
+	if err := tm.execShellCommands(cfg.BeforeStart, root); err != nil {
+		return err
+	}
+
 	for _, s := range cfg.Sessions {
 		if tm.tmux.SessionExists(s.Name) {
 			continue
 		}
 
 		sessionRoot := resolvePath(root, s.Root)
+
+		if err := tm.execShellCommands(s.Commands, sessionRoot); err != nil {
+			return err
+		}
+
 		if _, err := tm.tmux.NewSession(s.Name, sessionRoot, defaultWindowName); err != nil {
 			return err
 		}
 
 		for _, w := range s.Windows {
 			windowRoot := resolvePath(sessionRoot, w.Root)
+
 			if _, err := tm.tmux.NewWindow(s.Name, w.Name, windowRoot); err != nil {
 				return err
+			}
+
+			for _, c := range w.Commands {
+				if err := tm.tmux.SendKeys(w.Name, c); err != nil {
+					return err
+				}
 			}
 		}
 
@@ -80,4 +98,17 @@ func resolvePath(root, name string) string {
 		baseRoot = filepath.Join(root, name)
 	}
 	return baseRoot
+}
+
+func (tm Tm) execShellCommands(commands []string, path string) error {
+	for _, c := range commands {
+		cmd := exec.Command("/bin/sh", "-c", c)
+		cmd.Dir = path
+
+		if _, err := tm.cmd.Exec(cmd); err != nil {
+			return fmt.Errorf("exec shell command failed: %w", err)
+		}
+	}
+
+	return nil
 }
