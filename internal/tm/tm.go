@@ -59,7 +59,7 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 				}
 			}
 
-			for _, p := range w.Panes {
+			for i, p := range w.Panes {
 				paneRoot := resolvePath(windowRoot, p.Root)
 
 				pane, err := tm.tmux.SplitWindow(w.Name, p.Type, paneRoot)
@@ -67,11 +67,26 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 					return err
 				}
 
+				if i%2 == 0 {
+					if _, err := tm.tmux.SelectLayout(w.Name, tmux.Tiled); err != nil {
+						return err
+					}
+				}
+
 				for _, c := range p.Commands {
 					if err := tm.tmux.SendKeys(w.Name+"."+pane, c); err != nil {
 						return err
 					}
 				}
+			}
+
+			layout := w.Layout
+			if layout == "" {
+				layout = tmux.EvenVertical
+			}
+
+			if _, err := tm.tmux.SelectLayout(w.Name, layout); err != nil {
+				return err
 			}
 		}
 
