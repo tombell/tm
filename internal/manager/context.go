@@ -1,4 +1,4 @@
-package tm
+package manager
 
 import "os"
 

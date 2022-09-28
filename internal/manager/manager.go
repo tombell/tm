@@ -1,4 +1,4 @@
-package tm
+package manager
 
 import (
 	"os"
@@ -15,46 +15,46 @@ const (
 	defaultWindowName = "default_win_name"
 )
 
-type Tm struct {
+type Manager struct {
 	tmux tmux.Tmux
 	cmd  cmd.Cmd
 }
 
-func New(tmux tmux.Tmux, cmd cmd.Cmd) Tm {
-	return Tm{tmux, cmd}
+func New(tmux tmux.Tmux, cmd cmd.Cmd) Manager {
+	return Manager{tmux, cmd}
 }
 
-func (tm Tm) Start(cfg *config.Config, ctx Context) error {
+func (m Manager) Start(cfg *config.Config, ctx Context) error {
 	root := expandPath(cfg.Root)
 
-	if err := tm.execShellCommands(cfg.BeforeStart, root); err != nil {
+	if err := m.execShellCommands(cfg.BeforeStart, root); err != nil {
 		return err
 	}
 
 	for _, s := range cfg.Sessions {
-		if tm.tmux.SessionExists(s.Name) {
+		if m.tmux.SessionExists(s.Name) {
 			continue
 		}
 
 		sessionRoot := resolvePath(root, s.Root)
 
-		if err := tm.execShellCommands(s.Commands, sessionRoot); err != nil {
+		if err := m.execShellCommands(s.Commands, sessionRoot); err != nil {
 			return err
 		}
 
-		if _, err := tm.tmux.NewSession(s.Name, sessionRoot, defaultWindowName); err != nil {
+		if _, err := m.tmux.NewSession(s.Name, sessionRoot, defaultWindowName); err != nil {
 			return err
 		}
 
 		for _, w := range s.Windows {
 			windowRoot := resolvePath(sessionRoot, w.Root)
 
-			if _, err := tm.tmux.NewWindow(s.Name, w.Name, windowRoot); err != nil {
+			if _, err := m.tmux.NewWindow(s.Name, w.Name, windowRoot); err != nil {
 				return err
 			}
 
 			for _, c := range w.Commands {
-				if err := tm.tmux.SendKeys(w.Name, c); err != nil {
+				if err := m.tmux.SendKeys(w.Name, c); err != nil {
 					return err
 				}
 			}
@@ -62,19 +62,19 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 			for i, p := range w.Panes {
 				paneRoot := resolvePath(windowRoot, p.Root)
 
-				pane, err := tm.tmux.SplitWindow(w.Name, p.Type, paneRoot)
+				pane, err := m.tmux.SplitWindow(w.Name, p.Type, paneRoot)
 				if err != nil {
 					return err
 				}
 
 				if i%2 == 0 {
-					if _, err := tm.tmux.SelectLayout(w.Name, tmux.Tiled); err != nil {
+					if _, err := m.tmux.SelectLayout(w.Name, tmux.Tiled); err != nil {
 						return err
 					}
 				}
 
 				for _, c := range p.Commands {
-					if err := tm.tmux.SendKeys(w.Name+"."+pane, c); err != nil {
+					if err := m.tmux.SendKeys(w.Name+"."+pane, c); err != nil {
 						return err
 					}
 				}
@@ -85,12 +85,12 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 				layout = tmux.EvenVertical
 			}
 
-			if _, err := tm.tmux.SelectLayout(w.Name, layout); err != nil {
+			if _, err := m.tmux.SelectLayout(w.Name, layout); err != nil {
 				return err
 			}
 		}
 
-		if _, err := tm.tmux.KillWindow(defaultWindowName); err != nil {
+		if _, err := m.tmux.KillWindow(defaultWindowName); err != nil {
 			return err
 		}
 	}
@@ -98,9 +98,22 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 	return nil
 }
 
-func (tm Tm) Stop(cfg *config.Config) error {
+func (m Manager) Stop(cfg *config.Config) error {
 	for _, s := range cfg.Sessions {
-		if _, err := tm.tmux.KillSession(s.Name); err != nil {
+		if _, err := m.tmux.KillSession(s.Name); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m Manager) execShellCommands(commands []string, path string) error {
+	for _, c := range commands {
+		cmd := exec.Command("/bin/sh", "-c", c)
+		cmd.Dir = path
+
+		if _, err := m.cmd.Exec(cmd); err != nil {
 			return err
 		}
 	}
@@ -127,17 +140,4 @@ func resolvePath(root, name string) string {
 		baseRoot = filepath.Join(root, name)
 	}
 	return baseRoot
-}
-
-func (tm Tm) execShellCommands(commands []string, path string) error {
-	for _, c := range commands {
-		cmd := exec.Command("/bin/sh", "-c", c)
-		cmd.Dir = path
-
-		if _, err := tm.cmd.Exec(cmd); err != nil {
-			return err
-		}
-	}
-
-	return nil
 }

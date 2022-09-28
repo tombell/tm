@@ -13,6 +13,8 @@ const (
 )
 
 const (
+	MainHorizontal = "main-horizontal"
+	MainVertical   = "main-vertical"
 	EvenHorizontal = "even-horizontal"
 	EvenVertical   = "even-vertical"
 	Tiled          = "tiled"
