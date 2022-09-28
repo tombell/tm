@@ -131,12 +131,7 @@ func (tmux Tmux) SplitWindow(target, splitType, root string) (string, error) {
 	args = append(args, []string{"-t", target, "-c", root, "-F", "#{pane_id}"}...)
 	cmd := exec.Command("tmux", args...)
 
-	pane, err := tmux.cmd.Exec(cmd)
-	if err != nil {
-		return "", err
-	}
-
-	return pane, nil
+	return tmux.cmd.Exec(cmd)
 }
 
 func (tmux Tmux) SelectLayout(target, layoutType string) (string, error) {
