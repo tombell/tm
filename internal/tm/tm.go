@@ -1,7 +1,6 @@
 package tm
 
 import (
-	"fmt"
 	"os"
 	"os/exec"
 	"path/filepath"
@@ -121,7 +120,7 @@ func (tm Tm) execShellCommands(commands []string, path string) error {
 		cmd.Dir = path
 
 		if _, err := tm.cmd.Exec(cmd); err != nil {
-			return fmt.Errorf("exec shell command failed: %w", err)
+			return err
 		}
 	}
 

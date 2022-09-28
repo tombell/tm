@@ -1,7 +1,6 @@
 package config
 
 import (
-	"fmt"
 	"os"
 
 	"gopkg.in/yaml.v3"
@@ -35,13 +34,13 @@ type Config struct {
 func Load(name string) (*Config, error) {
 	data, err := os.ReadFile(name)
 	if err != nil {
-		return nil, fmt.Errorf("read file failed: %w", err)
+		return nil, err
 	}
 
 	var cfg Config
 
 	if err := yaml.Unmarshal(data, &cfg); err != nil {
-		return nil, fmt.Errorf("yaml unmarshal failed: %w", err)
+		return nil, err
 	}
 
 	return &cfg, nil

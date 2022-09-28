@@ -1,7 +1,6 @@
 package cmd
 
 import (
-	"fmt"
 	"log"
 	"os/exec"
 	"strings"
@@ -31,7 +30,7 @@ func (c DefaultCmd) Exec(cmd *exec.Cmd) (string, error) {
 			c.logger.Println(err, string(output))
 		}
 
-		return "", fmt.Errorf("exec command failed: %w", err)
+		return "", err
 	}
 
 	return strings.TrimSuffix(string(output), "\n"), nil
@@ -47,7 +46,7 @@ func (c DefaultCmd) ExecSilent(cmd *exec.Cmd) error {
 			c.logger.Println(err)
 		}
 
-		return fmt.Errorf("exec command failed: %w", err)
+		return err
 	}
 
 	return nil
