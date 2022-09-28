@@ -2,6 +2,7 @@ package config
 
 import (
 	"os"
+	"strings"
 
 	"gopkg.in/yaml.v3"
 )
@@ -35,6 +36,15 @@ type Config struct {
 }
 
 func Load(name string) (*Config, error) {
+	if strings.HasPrefix(name, "~/") {
+		homeDir, err := os.UserHomeDir()
+		if err != nil {
+			return nil, err
+		}
+
+		name = strings.Replace(name, "~", homeDir, 1)
+	}
+
 	data, err := os.ReadFile(name)
 	if err != nil {
 		return nil, err
