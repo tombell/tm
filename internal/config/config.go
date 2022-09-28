@@ -20,6 +20,7 @@ type Config struct {
 		Windows []struct {
 			Name     string   `yaml:"name"`
 			Root     string   `yaml:"root"`
+			Layout   string   `yaml:"layout"`
 			Commands []string `yaml:"commands"`
 
 			Panes []struct {
