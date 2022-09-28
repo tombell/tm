@@ -6,29 +6,32 @@ import (
 	"gopkg.in/yaml.v3"
 )
 
+type Pane struct {
+	Type     string   `yaml:"type"`
+	Root     string   `yaml:"root"`
+	Commands []string `yaml:"commands"`
+}
+
+type Window struct {
+	Name     string   `yaml:"name"`
+	Root     string   `yaml:"root"`
+	Layout   string   `yaml:"layout"`
+	Commands []string `yaml:"commands"`
+	Panes    []Pane   `yaml:"panes"`
+}
+
+type Session struct {
+	Name     string   `yaml:"name"`
+	Root     string   `yaml:"root"`
+	Commands []string `yaml:"commands"`
+	Windows  []Window `yaml:"windows"`
+}
+
 type Config struct {
-	Name        string   `yaml:"name"`
-	Root        string   `yaml:"root"`
-	BeforeStart []string `yaml:"before_start"`
-
-	Sessions []struct {
-		Name     string   `yaml:"name"`
-		Root     string   `yaml:"root"`
-		Commands []string `yaml:"commands"`
-
-		Windows []struct {
-			Name     string   `yaml:"name"`
-			Root     string   `yaml:"root"`
-			Layout   string   `yaml:"layout"`
-			Commands []string `yaml:"commands"`
-
-			Panes []struct {
-				Type     string   `yaml:"type"`
-				Root     string   `yaml:"root"`
-				Commands []string `yaml:"commands"`
-			} `yaml:"panes"`
-		} `yaml:"windows"`
-	} `yaml:"sessions"`
+	Name        string    `yaml:"name"`
+	Root        string    `yaml:"root"`
+	BeforeStart []string  `yaml:"before_start"`
+	Sessions    []Session `yaml:"sessions"`
 }
 
 func Load(name string) (*Config, error) {
