@@ -67,10 +67,8 @@ func (m Manager) createWindows(windows []config.Window, sessionName, sessionRoot
 			return err
 		}
 
-		for _, c := range w.Commands {
-			if err := m.tmux.SendKeys(w.Name, c); err != nil {
-				return err
-			}
+		if err := m.sendCommands(w.Commands, w.Name); err != nil {
+			return err
 		}
 
 		if err := m.createPanes(w.Panes, w.Name, windowRoot); err != nil {
@@ -105,10 +103,18 @@ func (m Manager) createPanes(panes []config.Pane, windowName, windowRoot string)
 			}
 		}
 
-		for _, c := range p.Commands {
-			if err := m.tmux.SendKeys(windowName+"."+pane, c); err != nil {
-				return err
-			}
+		if err := m.sendCommands(p.Commands, windowName+"."+pane); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m Manager) sendCommands(commands []string, target string) error {
+	for _, command := range commands {
+		if err := m.tmux.SendKeys(target, command); err != nil {
+			return err
 		}
 	}
 
