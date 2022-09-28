@@ -131,6 +131,11 @@ func (tmux Tmux) SplitWindow(target, splitType, root string) (string, error) {
 	return pane, nil
 }
 
+func (tmux Tmux) SelectLayout(target, layoutType string) (string, error) {
+	cmd := exec.Command("tmux", "select-layout", "-t", target, layoutType)
+	return tmux.cmd.Exec(cmd)
+}
+
 func (tmux Tmux) SendKeys(target, command string) error {
 	cmd := exec.Command("tmux", "send-keys", "-t", target, command, "Enter")
 	return tmux.cmd.ExecSilent(cmd)
