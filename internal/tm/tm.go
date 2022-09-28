@@ -62,7 +62,7 @@ func (tm Tm) Start(cfg *config.Config, ctx Context) error {
 			for _, p := range w.Panes {
 				paneRoot := resolvePath(windowRoot, p.Root)
 
-				pane, err := tm.tmux.SplitWindow(w.Name, "HorizontalSplit", paneRoot)
+				pane, err := tm.tmux.SplitWindow(w.Name, p.Type, paneRoot)
 				if err != nil {
 					return err
 				}
