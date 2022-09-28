@@ -12,6 +12,12 @@ const (
 	HorizontalSplit = "horizontal"
 )
 
+const (
+	EvenHorizontal = "even-horizontal"
+	EvenVertical   = "even-vertical"
+	Tiled          = "tiled"
+)
+
 type TmuxSession struct {
 	ID   string
 	Name string
