@@ -134,6 +134,12 @@ func (tmux Tmux) SplitWindow(target, splitType, root string) (string, error) {
 	return tmux.cmd.Exec(cmd)
 }
 
+func (tmux Tmux) RenumberWindows(target string) error {
+	cmd := exec.Command("tmux", "move-window", "-r", "-s", target, "-t", target)
+	_, err := tmux.cmd.Exec(cmd)
+	return err
+}
+
 func (tmux Tmux) SelectLayout(target, layoutType string) (string, error) {
 	cmd := exec.Command("tmux", "select-layout", "-t", target, layoutType)
 	return tmux.cmd.Exec(cmd)
