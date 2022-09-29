@@ -54,6 +54,10 @@ func (m Manager) createSessions(sessions []config.Session, root string) error {
 		if _, err := m.tmux.KillWindow(defaultWindowName); err != nil {
 			return err
 		}
+
+		if err := m.tmux.RenumberWindows(s.Name); err != nil {
+			return err
+		}
 	}
 
 	return nil
