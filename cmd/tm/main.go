@@ -45,7 +45,7 @@ func main() {
 	flag.Parse()
 
 	if version {
-		fmt.Fprintf(os.Stdout, "tm 0.0.0 (0)\n")
+		fmt.Fprintf(os.Stdout, "tm %s (%s)\n", Version, Commit)
 		os.Exit(0)
 	}
 
