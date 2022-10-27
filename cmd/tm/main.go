@@ -106,3 +106,28 @@ func start(logger *log.Logger, args []string) {
 		os.Exit(3)
 	}
 }
+
+func stop(logger *log.Logger, args []string) {
+	flagSet := flag.NewFlagSet("start", flag.ExitOnError)
+	flagSet.Usage = usageText("usage: tm start <project name>")
+	flagSet.Parse(args)
+
+	subArgs := flagSet.Args()
+
+	if len(subArgs) != 1 {
+		flagSet.Usage()
+	}
+
+	projectPath := fmt.Sprintf("~/.config/tm/%s.yml", subArgs[0])
+
+	cfg, err := config.Load(projectPath)
+	if err != nil {
+		fmt.Printf("error: %s\n", err)
+		os.Exit(3)
+	}
+
+	c := cmd.NewDefaultCmd(logger)
+	t := tmux.New(c)
+	m := manager.New(t, c)
+
+}
