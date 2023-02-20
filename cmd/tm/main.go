@@ -31,6 +31,8 @@ var (
 	version bool
 )
 
+const projectsDir = "~/.config/tm"
+
 func main() {
 	flag.Usage = func() {
 		fmt.Fprintf(os.Stderr, helpText)
@@ -64,7 +66,7 @@ func main() {
 	case "start":
 		start(logger, args[1:])
 	case "stop":
-		fmt.Println("stopping...")
+		stop(logger, args[1:])
 	default:
 		fmt.Fprintf(os.Stderr, "error: %q is not a known command\n", os.Args[1])
 		flag.Usage()
@@ -89,7 +91,7 @@ func start(logger *log.Logger, args []string) {
 		flagSet.Usage()
 	}
 
-	projectPath := fmt.Sprintf("~/.config/tm/%s.yml", subArgs[0])
+	projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, subArgs[0])
 
 	cfg, err := config.Load(projectPath)
 	if err != nil {
@@ -130,4 +132,8 @@ func stop(logger *log.Logger, args []string) {
 	t := tmux.New(c)
 	m := manager.New(t, c)
 
+	if err := m.Stop(cfg, manager.CreateContext()); err != nil {
+		fmt.Printf("error: %s\n", err)
+		os.Exit(3)
+	}
 }
