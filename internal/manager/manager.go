@@ -31,6 +31,13 @@ func (m Manager) Start(cfg *config.Config, ctx Context) error {
 	return m.createSessions(cfg.Sessions, root)
 }
 
+func (m Manager) Stop(cfg *config.Config, ctx Context) error {
+	root := expandPath(cfg.Root)
+
+	return m.killSessions(cfg.Sessions, root)
+
+}
+
 func (m Manager) createSessions(sessions []config.Session, root string) error {
 	for _, s := range sessions {
 		if m.tmux.SessionExists(s.Name) {
@@ -56,6 +63,20 @@ func (m Manager) createSessions(sessions []config.Session, root string) error {
 		}
 
 		if err := m.tmux.RenumberWindows(s.Name); err != nil {
+			return err
+		}
+	}
+
+	return nil
+}
+
+func (m Manager) killSessions(sessions []config.Session, root string) error {
+	for _, s := range sessions {
+		if !m.tmux.SessionExists(s.Name) {
+			continue
+		}
+
+		if _, err := m.tmux.KillSession(s.Name); err != nil {
 			return err
 		}
 	}
