@@ -3,8 +3,11 @@ package main
 import (
 	"flag"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"path/filepath"
+	"strings"
 
 	"github.com/tombell/tm/internal/cmd"
 	"github.com/tombell/tm/internal/config"
@@ -16,6 +19,7 @@ const helpText = `usage: tm [<flags>] <command>
 
 Commands:
 
+  list          List all projects
   start         Start a tmux project
   stop          Stop a tmux project
 
@@ -63,6 +67,8 @@ func main() {
 	}
 
 	switch args[0] {
+	case "list":
+		list()
 	case "start":
 		start(logger, args[1:])
 	case "stop":
@@ -77,6 +83,19 @@ func usageText(text string) func() {
 	return func() {
 		fmt.Fprintln(os.Stderr, text)
 		os.Exit(2)
+	}
+}
+
+func list() {
+	files, err := ioutil.ReadDir(manager.ExpandPath(projectsDir))
+	if err != nil {
+		fmt.Printf("error: %s\n", err)
+		os.Exit(3)
+	}
+
+	for _, file := range files {
+		filename := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
+		fmt.Println(filename)
 	}
 }
 

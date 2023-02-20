@@ -6,7 +6,7 @@ import (
 	"strings"
 )
 
-func expandPath(name string) string {
+func ExpandPath(name string) string {
 	if strings.HasPrefix(name, "~/") {
 		homeDir, err := os.UserHomeDir()
 		if err != nil {
@@ -20,7 +20,7 @@ func expandPath(name string) string {
 }
 
 func resolvePath(root, name string) string {
-	baseRoot := expandPath(name)
+	baseRoot := ExpandPath(name)
 	if baseRoot == "" || !filepath.IsAbs(baseRoot) {
 		baseRoot = filepath.Join(root, name)
 	}

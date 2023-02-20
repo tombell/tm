@@ -22,7 +22,7 @@ func New(tmux tmux.Tmux, cmd cmd.Cmd) Manager {
 }
 
 func (m Manager) Start(cfg *config.Config, ctx Context) error {
-	root := expandPath(cfg.Root)
+	root := ExpandPath(cfg.Root)
 
 	if err := m.execShellCommands(cfg.BeforeStart, root); err != nil {
 		return err
@@ -32,7 +32,7 @@ func (m Manager) Start(cfg *config.Config, ctx Context) error {
 }
 
 func (m Manager) Stop(cfg *config.Config, ctx Context) error {
-	root := expandPath(cfg.Root)
+	root := ExpandPath(cfg.Root)
 
 	return m.killSessions(cfg.Sessions, root)
 
