@@ -12,11 +12,13 @@ workflow.
 
 ## Installation
 
-To install the latest version, if you have `go` installed:
+You can install via [Homebrew](https://brew.sh) from the `tombell/formulae` tap.
+
+    brew install tombell/formulae/tm
+
+Alternatively, you can install the latest version if you have `go` installed:
 
     go install github.com/tombell/tm/cmd/tm@latest
-
-*Homebrew, coming soon.*
 
 ## Configuration
 
