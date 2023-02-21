@@ -32,6 +32,7 @@ type Config struct {
 	Name        string    `yaml:"name"`
 	Root        string    `yaml:"root"`
 	BeforeStart []string  `yaml:"before_start"`
+	AfterStop   []string  `yaml:"after_stop"`
 	Sessions    []Session `yaml:"sessions"`
 }
 
