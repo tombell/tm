@@ -10,8 +10,12 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+### Added
+
+- Added `AfterStop` commands to be run after stopping all sessions
+
 ## [0.0.1] - 2023-02-20
 
-###
+### Added
 
 - Added initial release
