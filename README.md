@@ -22,7 +22,66 @@ Alternatively, you can install the latest version if you have `go` installed:
 
 ## Configuration
 
-**TODO**
+Configuration files for projects are located in `~/.config/tm` (currently this
+cannot be configured itself, it may be possible in the future). Each YAML
+configuration file represents a "project". The name of the file is used as the
+project name (for example `~/.config/tm/awesome-web-app.yml`, the project name
+will be **awesome-web-app**.
+
+Below is all the available fields for the YAML file.
+
+```yaml
+# the initial root for the tmux sessions, ~ will be resolved to the home directory
+root: ~/Code
+
+# a list of commands to run in the root before starting all tmux sessions
+before_start:
+    - echo "Hello world"
+    - echo "Starting..."
+
+# a list of commands to run in the root after stopping all tmux sessions
+after_stop:
+    - echo "Stopping..."
+    - echo "Stopped"
+
+# a list of tmux sessions to start
+sessions:
+    # the name of the sessions
+    - name: frontend
+
+      # an absolute path or relative to the top level root
+      root: ./frontend
+
+      # a list of windows to create in the tmux session
+      windows:
+        # the name of the window
+        - name: server
+          # an absolute path or relative to the session root
+          root: ./server
+          # a list of commands to run in the window
+          commands:
+            - echo "This is the server"
+
+        # another window in the session
+        - name: editor
+          root: ./server
+          commands:
+            - nvim .
+
+    # another session in the project
+    - name: backend
+      root: ./backend
+      windows:
+        - name: server
+          root: ./server
+          commands:
+            - bundle exec rails s
+
+        - name: editor
+          root: ./server
+          commands:
+            - nvim .
+```
 
 ## Usage
 
