@@ -34,7 +34,11 @@ func (m Manager) Start(cfg *config.Config, ctx Context) error {
 func (m Manager) Stop(cfg *config.Config, ctx Context) error {
 	root := ExpandPath(cfg.Root)
 
-	return m.killSessions(cfg.Sessions, root)
+	if err := m.killSessions(cfg.Sessions, root); err != nil {
+		return err
+	}
+
+	return m.execShellCommands(cfg.AfterStop, root)
 
 }
 
