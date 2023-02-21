@@ -25,3 +25,15 @@ To install the latest version, if you have `go` installed:
 ## Usage
 
 **TODO**
+
+### List Projects
+
+**TODO**
+
+### Start Project
+
+**TODO**
+
+### Stop Project
+
+**TODO**
