@@ -96,16 +96,37 @@ You can even start multiple projects with `tm`.
 
 ## Usage
 
-**TODO**
+Below is the documentation for each available command.
+
+If you would like to see debug information logged out when running a command you
+can specify the `-d`/`--debug` flag before the command argument when running
+`tm` (for example: `tm --debug start my-project`).
 
 ### List Projects
 
-**TODO**
+The `list` command will list out all the available projects based on the project
+configuration files in `~/.config/tm`.
+
+    $ tm list
+    memoir
+    residently
+    stark
+    testing
 
 ### Start Project
 
-**TODO**
+The `start` command will start the `tmux` sessions for the given project name.
+
+    $ tm start my-project
+
+Currently you can only specify a single project name, but support for multiple
+will be added.
 
 ### Stop Project
 
-**TODO**
+The `stop` command will stop the `tmux` sessions for the given project name.
+
+    $ tm stop my-project
+
+Currently you can only specify a single project name, but support for multiple
+will be added.
