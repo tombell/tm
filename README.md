@@ -1,7 +1,7 @@
 # tm
 
-An opinionated manager for `tmux` sessions. Use `tm` for managing groups of
-`tmux` sessions.
+An opinionated manager for [tmux](https://github.com/tmux/tmux) sessions. Use
+`tm` for managing groups of `tmux` sessions.
 
 A `tmux` session might contain a combination of multiple windows and/or multiple
 splits (panes). With a project containing one or more sessions.
