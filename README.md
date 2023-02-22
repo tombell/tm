@@ -33,25 +33,20 @@ Below is all the available fields for the YAML file.
 ```yaml
 # the initial root for the tmux sessions, ~ will be resolved to the home directory
 root: ~/Code
-
 # a list of commands to run in the root before starting all tmux sessions
 before_start:
     - echo "Hello world"
     - echo "Starting..."
-
 # a list of commands to run in the root after stopping all tmux sessions
 after_stop:
     - echo "Stopping..."
     - echo "Stopped"
-
 # a list of tmux sessions to start
 sessions:
     # the name of the sessions
     - name: frontend
-
       # an absolute path or relative to the top level root
       root: ./frontend
-
       # a list of windows to create in the tmux session
       windows:
         # the name of the window
@@ -61,13 +56,27 @@ sessions:
           # a list of commands to run in the window
           commands:
             - echo "This is the server"
-
+          # the layout for the panes/splits in the window: main-horizontal|main-vertical|even-horizontal|even-vertical|tiled
+          layout: main-horizontal
+          # a list of panes/splits to create in the window
+          panes:
+            # the type of pane/split: horizontal|vertical
+            - type: horizontal
+              # an absolute path or relative to the window root
+              root: ./tests
+              # a list of commands to run in the pane/split
+              commands:
+                - npm test
+            # another pane/split in the window
+            - type: horizontal
+              root: ./stories
+              commands:
+                - npm run storybook
         # another window in the session
         - name: editor
           root: ./server
           commands:
             - nvim .
-
     # another session in the project
     - name: backend
       root: ./backend
@@ -76,12 +85,14 @@ sessions:
           root: ./server
           commands:
             - bundle exec rails s
-
         - name: editor
           root: ./server
           commands:
             - nvim .
 ```
+
+You can create as many project files as you like for your different projects.
+You can even start multiple projects with `tm`.
 
 ## Usage
 
