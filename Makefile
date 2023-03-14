@@ -5,7 +5,7 @@ LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT)"
 MODFLAGS=-mod=vendor
 TESTFLAGS=-cover
 
-PLATFORMS:=darwin linux windows
+PLATFORMS:=darwin linux
 
 dev:
 	@echo building dist/tm
