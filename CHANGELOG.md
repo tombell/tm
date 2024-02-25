@@ -10,6 +10,10 @@ adheres to [Semantic Versioning][semver].
 
 ## [Unreleased]
 
+### Changed
+
+- Changed `ioutil.ReadDir` (deprecated) to `os.ReadDir`
+
 ## [0.0.2] - 2023-02-21
 
 ### Added
