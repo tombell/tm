@@ -3,7 +3,6 @@ package main
 import (
 	"flag"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"path/filepath"
@@ -25,8 +24,8 @@ Commands:
 
 Special options:
 
-  -d/--debug    SHow debug logging
-  -v/--version  SHow the version number, then exit
+  -d/--debug    Show debug logging
+  -v/--version  Show the version number, then exit
   --help        Show this message, then exit
 `
 
@@ -87,7 +86,7 @@ func usageText(text string) func() {
 }
 
 func list() {
-	files, err := ioutil.ReadDir(manager.ExpandPath(projectsDir))
+	files, err := os.ReadDir(manager.ExpandPath(projectsDir))
 	if err != nil {
 		fmt.Printf("error: %s\n", err)
 		os.Exit(3)
