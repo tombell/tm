@@ -105,25 +105,27 @@ func start(logger *log.Logger, args []string) {
 
 	subArgs := flagSet.Args()
 
-	if len(subArgs) != 1 {
+	if len(subArgs) < 1 {
 		flagSet.Usage()
 	}
 
-	projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, subArgs[0])
+	for _, project := range subArgs {
+		projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, project)
 
-	cfg, err := config.Load(projectPath)
-	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		os.Exit(3)
-	}
+		cfg, err := config.Load(projectPath)
+		if err != nil {
+			fmt.Printf("error: %s\n", err)
+			os.Exit(3)
+		}
 
-	c := cmd.NewDefaultCmd(logger)
-	t := tmux.New(c)
-	m := manager.New(t, c)
+		c := cmd.NewDefaultCmd(logger)
+		t := tmux.New(c)
+		m := manager.New(t, c)
 
-	if err := m.Start(cfg, manager.CreateContext()); err != nil {
-		fmt.Printf("error: %s\n", err)
-		os.Exit(3)
+		if err := m.Start(cfg, manager.CreateContext()); err != nil {
+			fmt.Printf("error: %s\n", err)
+			os.Exit(3)
+		}
 	}
 }
 
@@ -134,24 +136,26 @@ func stop(logger *log.Logger, args []string) {
 
 	subArgs := flagSet.Args()
 
-	if len(subArgs) != 1 {
+	if len(subArgs) < 1 {
 		flagSet.Usage()
 	}
 
-	projectPath := fmt.Sprintf("~/.config/tm/%s.yml", subArgs[0])
+	for _, project := range subArgs {
+		projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, project)
 
-	cfg, err := config.Load(projectPath)
-	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		os.Exit(3)
-	}
+		cfg, err := config.Load(projectPath)
+		if err != nil {
+			fmt.Printf("error: %s\n", err)
+			os.Exit(3)
+		}
 
-	c := cmd.NewDefaultCmd(logger)
-	t := tmux.New(c)
-	m := manager.New(t, c)
+		c := cmd.NewDefaultCmd(logger)
+		t := tmux.New(c)
+		m := manager.New(t, c)
 
-	if err := m.Stop(cfg, manager.CreateContext()); err != nil {
-		fmt.Printf("error: %s\n", err)
-		os.Exit(3)
+		if err := m.Stop(cfg, manager.CreateContext()); err != nil {
+			fmt.Printf("error: %s\n", err)
+			os.Exit(3)
+		}
 	}
 }
