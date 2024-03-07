@@ -1,33 +1,32 @@
-VERSION?=dev
-COMMIT=$(shell git rev-parse HEAD | cut -c -8)
+NAME = tm
 
-LDFLAGS=-ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT)"
-MODFLAGS=-mod=vendor
-TESTFLAGS=-cover
+VERSION ?= dev
+COMMIT = $(shell git rev-parse HEAD | cut -c -8)
 
-PLATFORMS:=darwin linux
+LDFLAGS = -ldflags "-X main.Version=$(VERSION) -X main.Commit=$(COMMIT)"
+
+PLATFORMS := darwin-amd64 darwin-arm64 linux-amd64 linux-arm64
 
 dev:
-	@echo building dist/tm
-	@go build ${MODFLAGS} ${LDFLAGS} -o dist/tm ./cmd/tm
+	@echo "building bin/${NAME}"
+	@go build ${LDFLAGS} -o bin/${NAME} ./cmd/${NAME}
 
 prod: $(PLATFORMS)
 
 $(PLATFORMS):
-	@echo building dist/tm-$@-amd64
-	@GOOS=$@ GOARCH=amd64 go build ${MODFLAGS} ${LDFLAGS} -o dist/tm-$@-amd64 ./cmd/tm
+	@echo "building ${NAME}-$@"
+	@GOOS=$(word 1,$(subst -, ,$@)) GOARCH=$(word 2,$(subst -, ,$@)) \
+		go build ${LDFLAGS} -o bin/${NAME}-$@ ./cmd/${NAME}
 
 watch:
-	@while sleep 0.1; do \
-		trap "exit" SIGINT; \
-		find . -type d \( -name vendor \) -prune -false -o -type f \( -name "*.go" \) | entr -d -r make; \
+	@while sleep 1; do \
+		trap "exit" INT TERM; \
+		rg --files --glob '*.go' | \
+		entr -c -d -r make dev; \
 	done
 
-test:
-	@go test ${MODFLAGS} ${TESTFLAGS} ./...
-
 clean:
-	@rm -fr dist
+	@rm -fr bin
 
 .DEFAULT_GOAL := dev
-.PHONY: dev prod $(PLATFORMS) watch test clean
+.PHONY: dev prod $(PLATFORMS) watch clean
