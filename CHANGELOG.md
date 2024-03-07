@@ -9,7 +9,8 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ### Changed
 
-- Changed `ioutil.ReadDir` (deprecated) to `os.ReadDir`
+- Updated `ioutil.ReadDir` (deprecated) to `os.ReadDir`
+- Updated the `start` and `stop` commands to accept multiple projects
 
 ## [0.0.2] - 2023-02-21
 
