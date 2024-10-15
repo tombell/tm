@@ -1,5 +1,5 @@
 module github.com/tombell/tm
 
-go 1.19
+go 1.23
 
 require gopkg.in/yaml.v3 v3.0.1
