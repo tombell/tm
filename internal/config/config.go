@@ -22,10 +22,11 @@ type Window struct {
 }
 
 type Session struct {
-	Name     string   `yaml:"name"`
-	Root     string   `yaml:"root"`
-	Commands []string `yaml:"commands"`
-	Windows  []Window `yaml:"windows"`
+	Name        string   `yaml:"name"`
+	Root        string   `yaml:"root"`
+	BeforeStart []string `yaml:"before_start"`
+	AfterStart  []string `yaml:"after_start"`
+	Windows     []Window `yaml:"windows"`
 }
 
 type Config struct {

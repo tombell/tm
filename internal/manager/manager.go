@@ -50,7 +50,7 @@ func (m Manager) createSessions(sessions []config.Session, root string) error {
 
 		sessionRoot := resolvePath(root, s.Root)
 
-		if err := m.execShellCommands(s.Commands, sessionRoot); err != nil {
+		if err := m.execShellCommands(s.BeforeStart, sessionRoot); err != nil {
 			return err
 		}
 
@@ -67,6 +67,10 @@ func (m Manager) createSessions(sessions []config.Session, root string) error {
 		}
 
 		if err := m.tmux.RenumberWindows(s.Name); err != nil {
+			return err
+		}
+
+		if err := m.execShellCommands(s.AfterStart, sessionRoot); err != nil {
 			return err
 		}
 	}
