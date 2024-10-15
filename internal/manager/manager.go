@@ -39,7 +39,6 @@ func (m Manager) Stop(cfg *config.Config, ctx Context) error {
 	}
 
 	return m.execShellCommands(cfg.AfterStop, root)
-
 }
 
 func (m Manager) createSessions(sessions []config.Session, root string) error {
