@@ -67,11 +67,17 @@ func main() {
 
 	switch args[0] {
 	case "list":
-		list()
+		if err := list(); err != nil {
+			log.Fatal(err)
+		}
 	case "start":
-		start(logger, args[1:])
+		if err := start(logger, args[1:]); err != nil {
+			log.Fatal(err)
+		}
 	case "stop":
-		stop(logger, args[1:])
+		if err := stop(logger, args[1:]); err != nil {
+			log.Fatal(err)
+		}
 	default:
 		fmt.Fprintf(os.Stderr, "error: %q is not a known command\n", os.Args[1])
 		flag.Usage()
@@ -85,28 +91,39 @@ func usageText(text string) func() {
 	}
 }
 
-func list() {
+func list() error {
 	files, err := os.ReadDir(manager.ExpandPath(projectsDir))
 	if err != nil {
-		fmt.Printf("error: %s\n", err)
-		os.Exit(3)
+		return fmt.Errorf("failed to read projects directory: %w", err)
 	}
 
 	for _, file := range files {
 		filename := strings.TrimSuffix(file.Name(), filepath.Ext(file.Name()))
 		fmt.Println(filename)
 	}
+
+	return nil
 }
 
-func start(logger *log.Logger, args []string) {
-	flagSet := flag.NewFlagSet("start", flag.ExitOnError)
-	flagSet.Usage = usageText("usage: tm start <project name>")
+func runCommand(logger *log.Logger, args []string, cmdName string, action func(manager.Manager, *config.Config) error) error {
+	flagSet := flag.NewFlagSet(cmdName, flag.ExitOnError)
+	flagSet.Usage = usageText(fmt.Sprintf("usage: tm %s <project name>", cmdName))
+
+	var help bool
+	flagSet.BoolVar(&help, "help", false, "")
+	flagSet.BoolVar(&help, "h", false, "")
+
 	flagSet.Parse(args)
+
+	if help {
+		flagSet.Usage()
+		os.Exit(0)
+	}
 
 	subArgs := flagSet.Args()
 
 	if len(subArgs) < 1 {
-		flagSet.Usage()
+		return fmt.Errorf("usage: tm %s <project name>", cmdName)
 	}
 
 	for _, project := range subArgs {
@@ -114,48 +131,29 @@ func start(logger *log.Logger, args []string) {
 
 		cfg, err := config.Load(projectPath)
 		if err != nil {
-			fmt.Printf("error: %s\n", err)
-			os.Exit(3)
+			return fmt.Errorf("failed to load config for project %s: %w", project, err)
 		}
 
 		c := cmd.NewDefaultCmd(logger)
 		t := tmux.New(c)
 		m := manager.New(t, c)
 
-		if err := m.Start(cfg, manager.CreateContext()); err != nil {
-			fmt.Printf("error: %s\n", err)
-			os.Exit(3)
+		if err := action(m, cfg); err != nil {
+			return fmt.Errorf("failed to %s project %s: %w", cmdName, project, err)
 		}
 	}
+
+	return nil
 }
 
-func stop(logger *log.Logger, args []string) {
-	flagSet := flag.NewFlagSet("start", flag.ExitOnError)
-	flagSet.Usage = usageText("usage: tm start <project name>")
-	flagSet.Parse(args)
+func start(logger *log.Logger, args []string) error {
+	return runCommand(logger, args, "start", func(m manager.Manager, cfg *config.Config) error {
+		return m.Start(cfg, manager.CreateContext())
+	})
+}
 
-	subArgs := flagSet.Args()
-
-	if len(subArgs) < 1 {
-		flagSet.Usage()
-	}
-
-	for _, project := range subArgs {
-		projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, project)
-
-		cfg, err := config.Load(projectPath)
-		if err != nil {
-			fmt.Printf("error: %s\n", err)
-			os.Exit(3)
-		}
-
-		c := cmd.NewDefaultCmd(logger)
-		t := tmux.New(c)
-		m := manager.New(t, c)
-
-		if err := m.Stop(cfg, manager.CreateContext()); err != nil {
-			fmt.Printf("error: %s\n", err)
-			os.Exit(3)
-		}
-	}
+func stop(logger *log.Logger, args []string) error {
+	return runCommand(logger, args, "stop", func(m manager.Manager, cfg *config.Config) error {
+		return m.Stop(cfg, manager.CreateContext())
+	})
 }
