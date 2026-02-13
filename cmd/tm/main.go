@@ -107,7 +107,7 @@ func list() error {
 
 func runCommand(logger *log.Logger, args []string, cmdName string, action func(manager.Manager, *config.Config) error) error {
 	flagSet := flag.NewFlagSet(cmdName, flag.ExitOnError)
-	flagSet.Usage = usageText(fmt.Sprintf("usage: tm %s <project name>", cmdName))
+	flagSet.Usage = usageText(fmt.Sprintf("usage: tm %s <project names...>", cmdName))
 
 	var help bool
 	flagSet.BoolVar(&help, "help", false, "")
@@ -123,16 +123,30 @@ func runCommand(logger *log.Logger, args []string, cmdName string, action func(m
 	subArgs := flagSet.Args()
 
 	if len(subArgs) < 1 {
-		return fmt.Errorf("usage: tm %s <project name>", cmdName)
+		return fmt.Errorf("usage: tm %s <project names...>", cmdName)
 	}
+
+	var invalidProjects []string
+	var configs []*config.Config
 
 	for _, project := range subArgs {
 		projectPath := fmt.Sprintf("%s/%s.yml", projectsDir, project)
 
 		cfg, err := config.Load(projectPath)
 		if err != nil {
-			return fmt.Errorf("failed to load config for project %s: %w", project, err)
+			invalidProjects = append(invalidProjects, project)
+			continue
 		}
+
+		configs = append(configs, cfg)
+	}
+
+	if len(invalidProjects) > 0 {
+		return fmt.Errorf("the following projects do not exist or are invalid: %s", strings.Join(invalidProjects, ", "))
+	}
+
+	for i, cfg := range configs {
+		project := subArgs[i]
 
 		c := cmd.NewDefaultCmd(logger)
 		t := tmux.New(c)

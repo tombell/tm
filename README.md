@@ -115,18 +115,12 @@ configuration files in `~/.config/tm`.
 
 ### Start Project
 
-The `start` command will start the `tmux` sessions for the given project name.
+The `start` command will start the `tmux` sessions for the given project names.
 
     $ tm start my-project
 
-Currently you can only specify a single project name, but support for multiple
-will be added.
-
 ### Stop Project
 
-The `stop` command will stop the `tmux` sessions for the given project name.
+The `stop` command will stop the `tmux` sessions for the given project names.
 
     $ tm stop my-project
-
-Currently you can only specify a single project name, but support for multiple
-will be added.
