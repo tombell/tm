@@ -34,7 +34,7 @@ func (m Manager) Start(cfg *config.Config, ctx Context) error {
 func (m Manager) Stop(cfg *config.Config, ctx Context) error {
 	root := ExpandPath(cfg.Root)
 
-	if err := m.killSessions(cfg.Sessions, root); err != nil {
+	if err := m.killSessions(cfg.Sessions); err != nil {
 		return err
 	}
 
@@ -77,7 +77,7 @@ func (m Manager) createSessions(sessions []config.Session, root string) error {
 	return nil
 }
 
-func (m Manager) killSessions(sessions []config.Session, root string) error {
+func (m Manager) killSessions(sessions []config.Session) error {
 	for _, s := range sessions {
 		if !m.tmux.SessionExists(s.Name) {
 			continue
