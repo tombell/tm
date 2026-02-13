@@ -1,6 +1,7 @@
 package manager
 
 import (
+	"os"
 	"os/exec"
 
 	"github.com/tombell/tm/internal/cmd"
@@ -155,7 +156,12 @@ func (m Manager) sendCommands(commands []string, target string) error {
 
 func (m Manager) execShellCommands(commands []string, path string) error {
 	for _, c := range commands {
-		cmd := exec.Command("/bin/sh", "-c", c)
+		shell := os.Getenv("SHELL")
+		if shell == "" {
+			shell = "/bin/sh"
+		}
+
+		cmd := exec.Command(shell, "-c", c)
 		cmd.Dir = path
 
 		if _, err := m.cmd.Exec(cmd); err != nil {
